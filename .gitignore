@@ -1,0 +1,24 @@
+# Dependencies and generated output
+node_modules/
+dist/
+build/
+coverage/
+main.js
+*.tsbuildinfo
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+.obsidian/
+.vscode/
+.idea/
+data.json
+
+# Local vaults, logs and temporary files
+test-vault/
+*.log
+*.tmp
+Thumbs.db
+Desktop.ini
+.DS_Store
