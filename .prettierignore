@@ -1,0 +1,8 @@
+node_modules/
+main.js
+dist/
+build/
+coverage/
+test-vault/
+package-lock.json
+LICENSE
