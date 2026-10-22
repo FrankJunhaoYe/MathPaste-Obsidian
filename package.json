@@ -5,7 +5,7 @@
   "description": "Math delimiter conversion for Obsidian on Windows (development scaffold).",
   "type": "module",
   "main": "main.js",
-  "author": "FrankJunhaoYe",
+  "author": "",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -38,6 +38,8 @@
     "eslint": "10.13.0",
     "globals": "17.13.0",
     "mdast-util-from-markdown": "2.1.0",
+    "mdast-util-frontmatter": "2.0.1",
+    "micromark-extension-frontmatter": "2.0.0",
     "obsidian": "1.14.4",
     "prettier": "3.9.10",
     "typescript": "5.9.3",

@@ -4,7 +4,7 @@
 
 - 仓库：`FrankJunhaoYe/MathPaste-Obsidian`；插件显示名：`MathPaste`；ID：`mathpaste`。
 - 目标是 Windows Obsidian 内的公式定界符转换，MIT 协议，不需要账号、密钥或服务器。
-- 工程初始化和 P1 首轮接口验证已有记录，见 `docs/p1-validation.md`。转换、命令、粘贴和设置的产品实现仍未完成；按开发计划默认规则推进，宿主接口证据不等于产品验收。
+- P1 接口验证见 `docs/p1-validation.md`，P2 纯转换核心及处理上限见 `docs/p2-rules.md`。命令、自动粘贴和设置仍待接入；纯逻辑测试不等于宿主功能验收。
 - 开始任务前读取用户当前指示、`docs/requirements.md`、`docs/development-plan.md` 和相关验收项。用户当轮范围优先。
 
 ## 改动流程
