@@ -112,6 +112,24 @@ describe('manual editor transactions', () => {
 });
 
 describe('paste transaction branches', () => {
+  it('converts a display formula after a long prose line and undoes only the paste', () => {
+    const before = 'a'.repeat(4_096) + '\n';
+    const f = fixture(before, before.length);
+    const body =
+      '\n' + String.raw`\boxed{\bar X\approx N\left(\mu,\frac{\sigma^2}{n}\right)}` + '\n';
+    const p = paste(String.raw`\[` + body + String.raw`\]`);
+    expect(convertPaste(p.event, f.editor, f.view, true)).toBe(true);
+    expect(p.event.defaultPrevented).toBe(true);
+    expect(f.dispatch).toHaveBeenCalledTimes(1);
+    const expected = before + '$$' + body + '$$';
+    expect(f.text()).toBe(expected);
+    f.stepUndo();
+    expect(f.text()).toBe(before);
+    f.stepRedo();
+    expect(f.text()).toBe(expected);
+    expect(f.view.state.selection.main.head).toBe(expected.length);
+  });
+
   it('inserts converted plain text once, undoing only the paste and restoring selection', () => {
     const f = fixture('OLD', 0, 3);
     f.change({

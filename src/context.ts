@@ -7,7 +7,7 @@ export interface TextRange {
   readonly to: number;
 }
 export const MAX_DOCUMENT_LENGTH = 32_768;
-export const MAX_LINE_LENGTH = 2_048;
+export const MAX_LINE_LENGTH = 8_192;
 export const MAX_STRUCTURE_MARKERS = 2_048;
 
 export type ContextResult =

@@ -2,6 +2,7 @@ import { isolateHistory } from '@codemirror/commands';
 import { Transaction } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
 import type { Editor } from 'obsidian';
+import { MAX_DOCUMENT_LENGTH, MAX_LINE_LENGTH, MAX_STRUCTURE_MARKERS } from './context';
 import { mapSelection, planConversion, planPaste, type ConversionPlan } from './converter';
 
 export interface EditorResult {
@@ -69,7 +70,7 @@ export function resultMessage(result: EditorResult): string {
     case 'unchanged':
       return '未找到可安全转换的完整公式';
     case 'too-large':
-      return '文本超过处理上限（全文 32768、单行 2048、结构标记 2048），未作修改';
+      return `文本超过处理上限（全文 ${MAX_DOCUMENT_LENGTH}、单行 ${MAX_LINE_LENGTH}、结构标记 ${MAX_STRUCTURE_MARKERS}），未作修改`;
     case 'multiple-selections':
       return 'MathPaste 目前仅支持单选区';
     case 'unsafe-context':

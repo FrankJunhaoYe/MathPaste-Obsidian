@@ -17,6 +17,8 @@ const line = String.raw`paragraph \(x\) ` + '`code`\n\n';
 for (const [name, text] of [
   ['10 KB mixed', line.repeat(400)],
   ['32 KB plain', ('a'.repeat(1000) + '\n').repeat(32) + String.raw`\(x\)`],
+  ['8 KB single line', 'a'.repeat(8192) + '\n\n' + String.raw`\(x\)`],
+  ['32 KB long paragraphs', ('a'.repeat(8000) + '\n\n').repeat(4) + String.raw`\(x\)`],
   ['1 MB mixed', line.repeat(42_000)],
   ['unclosed delimiters', (String.raw`\(` + '\n').repeat(2000)],
 ]) {
