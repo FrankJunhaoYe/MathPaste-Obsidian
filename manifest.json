@@ -2,9 +2,9 @@
   "id": "mathpaste",
   "name": "MathPaste",
   "version": "0.1.0",
-  "minAppVersion": "1.1.0",
-  "description": "Convert LaTeX math delimiters to dollar syntax (development scaffold).",
-  "author": "FrankJunhaoYe",
-  "authorUrl": "https://github.com/FrankJunhaoYe",
+  "minAppVersion": "1.14.4",
+  "description": "Convert paired LaTeX math delimiters on paste or by command.",
+  "author": "",
+  "authorUrl": "",
   "isDesktopOnly": true
 }

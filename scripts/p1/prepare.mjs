@@ -53,14 +53,14 @@ export async function prepareVault(target, livePreview = false) {
         version: '0.1.0',
         minAppVersion: '1.1.0',
         description: 'Synthetic P1 API checks; not the MathPaste converter.',
-        author: 'FrankJunhaoYe',
+        author: '',
         isDesktopOnly: true,
       },
       null,
       2,
     ),
   );
-  // Install the actual production scaffold alongside the probe (it still has no conversion behavior).
+  // Install the current production build alongside the separate developer probe.
   const production = join(vault, '.obsidian', 'plugins', 'mathpaste');
   await mkdir(production);
   await copyFile(join(repo, 'main.js'), join(production, 'main.js'));
