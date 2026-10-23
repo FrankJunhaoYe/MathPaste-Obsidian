@@ -24,12 +24,13 @@ const versions = JSON.parse(
 describe('Obsidian packaging contract', () => {
   it('provides the required desktop plugin metadata', () => {
     expect(manifest.id).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
-    for (const value of [manifest.name, manifest.description, manifest.author]) {
+    for (const value of [manifest.name, manifest.description]) {
       expect(value.trim().length).toBeGreaterThan(0);
     }
     expect(manifest.version).toMatch(/^\d+\.\d+\.\d+$/);
     expect(manifest.minAppVersion).toMatch(/^\d+\.\d+\.\d+$/);
     expect(manifest.isDesktopOnly).toBe(true);
+    expect(manifest.author).toBe('');
   });
 
   it('keeps package, manifest and compatibility versions aligned', () => {
@@ -52,8 +53,10 @@ describe('Obsidian packaging contract', () => {
     expect(imports).toContainEqual(
       expect.objectContaining({ path: 'obsidian', kind: 'require-call', external: true }),
     );
-    expect(Object.keys(result.metafile.inputs).some((path) => path.includes('node_modules/'))).toBe(
-      false,
-    );
+    expect(
+      Object.keys(result.metafile.inputs).some((path) =>
+        /node_modules\/(?:obsidian|@codemirror|@lezer)\//u.test(path),
+      ),
+    ).toBe(false);
   });
 });

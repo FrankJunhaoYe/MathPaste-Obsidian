@@ -2,7 +2,7 @@
   "name": "mathpaste-obsidian",
   "version": "0.1.0",
   "private": true,
-  "description": "Math delimiter conversion for Obsidian on Windows (development scaffold).",
+  "description": "Local math delimiter conversion for Obsidian on Windows.",
   "type": "module",
   "main": "main.js",
   "author": "",
