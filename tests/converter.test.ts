@@ -281,6 +281,26 @@ describe('position mapping in original UTF-16 coordinates', () => {
 });
 
 describe('pure paste planning for later host integration', () => {
+  it.each(['\n', '\r\n'])(
+    'converts the reported multiline formula after a long prose line with %j newlines',
+    (newline) => {
+      const text = 'a'.repeat(4_096) + newline;
+      const body = [
+        '',
+        raw`T(n)=\Theta(n\log_3n)+\Theta(n)`,
+        raw`=\boxed{\Theta(n\log n)}`,
+        '',
+      ].join(newline);
+      const input = raw`\[` + body + raw`\]`;
+      const result = planPaste(text, { from: text.length, to: text.length }, input);
+      expect(result.status).toBe('converted');
+      expect(result.convertedCount).toBe(1);
+      expect(applyEdits(text, result.edits)).toBe(text + '$$' + body + '$$');
+      const pasted = text + input;
+      expect(convert(pasted)).toBe(text + '$$' + body + '$$');
+    },
+  );
+
   it('returns one replacement, converted payload and final cursor', () => {
     const result = planPaste('😀 before OLD after', { from: 10, to: 13 }, raw`\(x\) / \[y\]`);
     expect(result.status).toBe('converted');
@@ -342,6 +362,23 @@ describe('bounded work and safe fallback', () => {
     expect(
       planPaste('', { from: 0, to: 0 }, 'x'.repeat(MAX_DOCUMENT_LENGTH) + raw`\(x\)`).status,
     ).toBe('too-large');
+  });
+
+  it('accepts a line at the limit and leaves an over-limit paste to the host', () => {
+    const text = 'a'.repeat(MAX_LINE_LENGTH) + '\n';
+    const inserted = raw`\(x\)`;
+    const result = planPaste(text, { from: text.length, to: text.length }, inserted);
+    expect(applyEdits(text, result.edits)).toBe(text + '$x$');
+    const overLimit = 'a' + text;
+    expect(
+      planPaste(overLimit, { from: overLimit.length, to: overLimit.length }, inserted).status,
+    ).toBe('too-large');
+  });
+
+  it.each(['```', '$$'])('keeps long lines inside %s protected', (delimiter) => {
+    const text = delimiter + '\n' + 'a'.repeat(4_096) + '\nHERE\n' + delimiter;
+    const from = text.indexOf('HERE');
+    expect(planPaste(text, { from, to: from + 4 }, raw`\(x\)`).status).toBe('unsafe-context');
   });
 
   it('converts a roughly 10 KB mixed document within the supported budget', () => {
