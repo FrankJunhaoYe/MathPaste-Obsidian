@@ -54,9 +54,11 @@ export function convertPaste(
   const initial = view.state;
   const result = planPaste(initial.doc.toString(), initial.selection.main, inserted);
   if (result.status !== 'converted' || view.state !== initial || !result.selection) return false;
+  const changes = initial.changes(result.edits);
+  const cursor = changes.mapPos(initial.selection.main.to, 1);
   view.dispatch({
-    changes: result.edits,
-    selection: result.selection,
+    changes,
+    selection: { anchor: cursor, head: cursor },
     annotations: [isolateHistory.of('full'), Transaction.userEvent.of('input.paste')],
   });
   event.preventDefault();

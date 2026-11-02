@@ -144,6 +144,31 @@ export default class HostProbe extends Plugin {
           editor.redo();
           checks['pasteRedo'] = editor.getValue() === 'PRIOR>$x$ / $$y$$';
         }
+        editor.setValue('');
+        view.dispatch({ selection: { anchor: 0 } });
+        const crlfBody = [
+          String.raw`T(n)=\Theta(n\log_3n)+\Theta(n)`,
+          String.raw`=\boxed{\Theta(n\log n)}`,
+        ];
+        const crlfData = new DataTransfer();
+        crlfData.setData('text/plain', [String.raw`\[`, ...crlfBody, String.raw`\]`].join('\r\n'));
+        const crlfEvent = new ClipboardEvent('paste', {
+          clipboardData: crlfData,
+          cancelable: true,
+          bubbles: true,
+        });
+        view.contentDOM.dispatchEvent(crlfEvent);
+        const crlfExpected = ['$$', ...crlfBody, '$$'].join('\n');
+        checks['domCrlfPaste'] = enabled
+          ? crlfEvent.defaultPrevented && editor.getValue() === crlfExpected
+          : editor.getValue() !== crlfExpected;
+        if (enabled) {
+          checks['domCrlfCursor'] = view.state.selection.main.head === crlfExpected.length;
+          editor.undo();
+          checks['domCrlfUndo'] = editor.getValue() === '';
+          editor.redo();
+          checks['domCrlfRedo'] = editor.getValue() === crlfExpected;
+        }
         for (const [label, text, position] of [
           ['code', '`HERE`', 3],
           ['math', '$HERE$', 3],
@@ -198,5 +223,18 @@ export default class HostProbe extends Plugin {
     }
     if (!this.cancelled)
       await this.app.vault.adapter.write(output, JSON.stringify(report, null, 2));
+    if (enabled && !this.cancelled) {
+      const source = await this.app.vault.create(
+        `Native-copy-source-${Date.now()}.md`,
+        [
+          String.raw`\[`,
+          String.raw`\boxed{\bar X\approx N\left(\mu,\frac{\sigma^2}{n}\right)}`,
+          String.raw`\]`,
+        ].join('\r\n'),
+      );
+      await this.app.workspace
+        .getLeaf(false)
+        .openFile(source, { state: { mode: 'source', source: true } });
+    }
   }
 }
