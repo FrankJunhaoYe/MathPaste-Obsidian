@@ -112,6 +112,43 @@ describe('manual editor transactions', () => {
 });
 
 describe('paste transaction branches', () => {
+  it.each(['\r\n', '\r'])(
+    'converts multiline clipboard text using %j without an invalid cursor',
+    (newline) => {
+      const f = fixture('');
+      const body = [
+        String.raw`T(n)=\Theta(n\log_3n)+\Theta(n)`,
+        String.raw`=\boxed{\Theta(n\log n)}`,
+      ];
+      const p = paste([String.raw`\[`, ...body, String.raw`\]`].join(newline));
+      expect(convertPaste(p.event, f.editor, f.view, true)).toBe(true);
+      const expected = ['$$', ...body, '$$'].join('\n');
+      expect(f.text()).toBe(expected);
+      expect(f.view.state.selection.main.head).toBe(expected.length);
+      expect(p.event.defaultPrevented).toBe(true);
+      f.stepUndo();
+      expect(f.text()).toBe('');
+      f.stepRedo();
+      expect(f.text()).toBe(expected);
+    },
+  );
+
+  it('places the cursor immediately after a CRLF paste when replacing a reverse selection', () => {
+    const f = fixture('😀 OLD trailing text', 6, 3);
+    const p = paste('\\[\r\nx\r\n\\]\r\n');
+    expect(convertPaste(p.event, f.editor, f.view, true)).toBe(true);
+    const inserted = '$$\nx\n$$\n';
+    const expected = '😀 ' + inserted + ' trailing text';
+    expect(f.text()).toBe(expected);
+    expect(f.view.state.selection.main.head).toBe(3 + inserted.length);
+    f.stepUndo();
+    expect(f.text()).toBe('😀 OLD trailing text');
+    expect(f.view.state.selection.main.anchor).toBe(6);
+    expect(f.view.state.selection.main.head).toBe(3);
+    f.stepRedo();
+    expect(f.text()).toBe(expected);
+  });
+
   it('converts a display formula after a long prose line and undoes only the paste', () => {
     const before = 'a'.repeat(4_096) + '\n';
     const f = fixture(before, before.length);
